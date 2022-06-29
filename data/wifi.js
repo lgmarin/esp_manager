@@ -38,14 +38,15 @@ function addRowHandlers() {
     }
 }
 
-var res_test =  [
-        {"SSID":"Teste 1", "Quality":"20"},
-        {"SSID":"Teste 2", "Quality":"50"},
-        {"SSID":"Teste 3", "Quality":"100"},
-        {"SSID":"Teste 4", "Quality":"20"},
-        {"SSID":"Teste 5", "Quality":"50"},
-        {"SSID":"Teste 6", "Quality":"100"}
-    ];
+var res_test = {"networks": 
+                [{"SSID":"Teste 1", "Quality":"20"},
+                {"SSID":"Testesssss 2", "Quality":"50"},
+                {"SSID":"Teste 3", "Quality":"100"},
+                {"SSID":"Teste 4", "Quality":"20"},
+                {"SSID":"Teste 5", "Quality":"50"},
+                {"SSID":"Teste 6", "Quality":"100"}
+                ]};
+
 
 //this function is in the event listener and will execute on page load
 function get_json_data(){
@@ -73,7 +74,7 @@ function get_json_data(){
 //this function appends the json data to the table 'gable'
 function append_json(data){
     var table = document.getElementById('wifi-table-body');
-    data.forEach(function(object) {
+    data.networks.forEach(function(object) {
         var tr = document.createElement('tr');
         tr.classList.add("table-row");
         tr.innerHTML = 

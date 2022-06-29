@@ -45,8 +45,8 @@ String scanNetworks() {
     lastScanMillis = currentMillis;
   }
 
-  json +=  "[";
-  //json += "{\"networks\": [";
+  //json +=  "[";
+  json += "{\"networks\": [";
   if(n == -2 && canScan){
     // Scan not triggered, and not in the waiting timer
     WiFi.scanNetworks(true);
@@ -63,8 +63,8 @@ String scanNetworks() {
       WiFi.scanNetworks(true);
     }
   }
-  json += "]";
-  //json += "] }";
+  //json += "]";
+  json += "] }";
 
   return json;
 }
@@ -84,11 +84,9 @@ void connectToWifi(String ssid, String pwd, String ip = "", String gw = "", Stri
       WiFi.config(wifi_ip, wifi_gw, wifi_mask);
     }
   }
-  
-
   WiFi.disconnect();
   WiFi.begin(ssid, password);
-  WiFi.waitForConnectResult();
+  Serial.println(WiFi.waitForConnectResult());
 }
 
 void setup() {
