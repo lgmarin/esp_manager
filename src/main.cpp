@@ -59,6 +59,7 @@ String scanNetworks() {
 
 void setup() {
   Serial.begin(115200);
+
   // Setup LittleFS
   server.serveStatic("/", LittleFS, "/").setDefaultFile("index.htm");
 
@@ -72,7 +73,11 @@ void setup() {
 
     server.on("/scan", HTTP_GET, [](AsyncWebServerRequest *request){
       request->send(200, "application/json", scanNetworks());
-    });    
+    });
+
+    server.on("/status", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(200, "application/json", "{\"status\": \"" + String(WiFi.status()) + "\", \"network\": \""+ WiFi.SSID() + "\"}");
+    });        
   }
   
   server.begin();
