@@ -29,6 +29,31 @@ bool openCaptivePortal(){
   return false;
 }
 
+String scanNetworks() {
+  String json = "[";
+  int n = WiFi.scanComplete();
+
+  if(n == -2){
+    // Scan not triggered, start scanning
+    WiFi.scanNetworks(true);
+  }else if(n){
+    for (int i = 0; i < n; ++i){
+      if(i) json += ",";
+      json += "{";
+      json += "\"ssid\":"+WiFi.SSID(i);
+      json += ",\"quality\":\""+String(WiFi.RSSI(i))+"\"";     
+      json += "}";
+    }
+    WiFi.scanDelete();
+    if(WiFi.scanComplete() == -2){
+      WiFi.scanNetworks(true);
+    }
+  }
+  json += "]";
+  //server.send(200, "application/json", "{\"networks\": [" + str + "] }");
+  json = String();
+}
+
 void setup() {
   Serial.begin(115200);
   // Setup LittleFS
@@ -40,7 +65,11 @@ void setup() {
     //Serve configuration page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
       request->send(LittleFS, "/wifi.html", "text/html", false);
-  }).setFilter(ON_AP_FILTER);
+    }).setFilter(ON_AP_FILTER);
+
+    server.on("/scan", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(200, "application/json", json);
+    });    
   }
   
   server.begin();
