@@ -69,11 +69,33 @@ String scanNetworks() {
   return json;
 }
 
+void connectToWifi(String ssid, String pwd, String ip = "", String gw = "", String mask = "") {
+  
+  Serial.println("Connecting to station: ");
+  Serial.print(ssid);
+  if (ip == "" && gw == "")
+  {
+    IPAddress wifi_ip;
+    IPAddress wifi_gw; 
+    IPAddress wifi_mask; 
+    if (wifi_ip.fromString(ip) && wifi_gw.fromString(gw), wifi_mask.fromString(mask))
+    {
+      Serial.println("Using dynamic IP...");
+      WiFi.config(wifi_ip, wifi_gw, wifi_mask);
+    }
+  }
+  
+
+  WiFi.disconnect();
+  WiFi.begin(ssid, password);
+  WiFi.waitForConnectResult();
+}
+
 void setup() {
   Serial.begin(115200);
 
   // Setup LittleFS
-  server.serveStatic("/", LittleFS, "/").setDefaultFile("index.htm");
+  server.serveStatic("/", LittleFS, "/");
 
   // Open Captive portal and configure Wifi Credentials
   if (openCaptivePortal())
@@ -89,7 +111,18 @@ void setup() {
 
     server.on("/status", HTTP_GET, [](AsyncWebServerRequest *request){
       request->send(200, "application/json", "{\"status\": \"" + String(WiFi.status()) + "\", \"network\": \""+ WiFi.SSID() + "\"}");
-    });        
+    });
+
+    server.on("/connect", HTTP_GET, [] (AsyncWebServerRequest *request) {
+        if (request->hasParam("auto-ip") && request->hasParam("wifi-ssid") && request->hasParam("wifi-password")) {
+          connectToWifi(request->getParam("wifi-ssid")->value(), request->getParam("wifi-password")->value());
+        } else if (request->hasParam("wifi-ip") && request->hasParam("wifi-gateway") && request->hasParam("wifi-ssid") && request->hasParam("wifi-password"))
+        {
+          connectToWifi(request->getParam("wifi-ssid")->value(), request->getParam("wifi-password")->value(),\
+                        request->getParam("wifi-ip")->value(), request->getParam("wifi-gateway")->value());
+        }
+        request->send(200, "application/json", "{\"status\": \"connecting\" }");
+      });
   }
   
   server.begin();
