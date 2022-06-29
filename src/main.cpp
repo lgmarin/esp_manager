@@ -29,14 +29,26 @@ bool openCaptivePortal(){
   return false;
 }
 
+#define SCAN_PERIOD 3500
+long lastScanMillis;
+long currentMillis;
+
 String scanNetworks() {
   String json;
+  bool canScan;
   int n = WiFi.scanComplete();
+
+  if (currentMillis - lastScanMillis > SCAN_PERIOD)
+  {
+    canScan = true;
+    Serial.print("\nScan interval ... ");
+    lastScanMillis = currentMillis;
+  }
 
   json +=  "[";
   //json += "{\"networks\": [";
-  if(n == -2){
-    // Scan not triggered, start scanning
+  if(n == -2 && canScan){
+    // Scan not triggered, and not in the waiting timer
     WiFi.scanNetworks(true);
   }else if(n){
     for (int i = 0; i < n; ++i){
