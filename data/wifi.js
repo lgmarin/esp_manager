@@ -4,19 +4,22 @@
 var auto_ip = document.querySelector("#set-auto-ip");
 
 window.onload = function() {
-    document.querySelector("#wifi_ip").closest('.mdl-textfield').style.display = "none";
-    document.querySelector("#wifi_gateway").closest('.mdl-textfield').style.display = "none";
+    document.querySelector("#ip").closest('.mdl-textfield').style.display = "none";
+    document.querySelector("#gateway").closest('.mdl-textfield').style.display = "none";
+    document.querySelector("#mask").closest('.mdl-textfield').style.display = "none";
     append_json(res_test);
     addRowHandlers();
 };
 
 auto_ip.onchange = function() {
     if(this.checked){
-        document.querySelector("#wifi_ip").closest('.mdl-textfield').style.display = "none";
-        document.querySelector("#wifi_gateway").closest('.mdl-textfield').style.display = "none";
+        document.querySelector("#ip").closest('.mdl-textfield').style.display = "none";
+        document.querySelector("#gateway").closest('.mdl-textfield').style.display = "none";
+        document.querySelector("#mask").closest('.mdl-textfield').style.display = "none";
     }else{
-        document.querySelector("#wifi_ip").closest('.mdl-textfield').style.display = "";
-        document.querySelector("#wifi_gateway").closest('.mdl-textfield').style.display = "";
+        document.querySelector("#ip").closest('.mdl-textfield').style.display = "";
+        document.querySelector("#gateway").closest('.mdl-textfield').style.display = "";
+        document.querySelector("#mask").closest('.mdl-textfield').style.display = "";
     }
 }
 

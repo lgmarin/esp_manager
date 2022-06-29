@@ -112,12 +112,12 @@ void setup() {
     });
 
     server.on("/connect", HTTP_GET, [] (AsyncWebServerRequest *request) {
-        if (request->hasParam("auto-ip") && request->hasParam("wifi-ssid") && request->hasParam("wifi-password")) {
-          connectToWifi(request->getParam("wifi-ssid")->value(), request->getParam("wifi-password")->value());
-        } else if (request->hasParam("wifi-ip") && request->hasParam("wifi-gateway") && request->hasParam("wifi-ssid") && request->hasParam("wifi-password"))
+        if (request->hasParam("auto-ip") && request->hasParam("ssid") && request->hasParam("password")) {
+          connectToWifi(request->getParam("ssid")->value(), request->getParam("password")->value());
+        } else if (request->hasParam("ip") && request->hasParam("gateway") && request->hasParam("ssid") && request->hasParam("password"))
         {
-          connectToWifi(request->getParam("wifi-ssid")->value(), request->getParam("wifi-password")->value(),\
-                        request->getParam("wifi-ip")->value(), request->getParam("wifi-gateway")->value());
+          connectToWifi(request->getParam("ssid")->value(), request->getParam("password")->value(),\
+                        request->getParam("ip")->value(), request->getParam("gateway")->value());
         }
         request->send(200, "application/json", "{\"status\": \"connecting\" }");
       });

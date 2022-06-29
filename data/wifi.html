@@ -90,15 +90,20 @@
                       <span class = "mdl-checkbox__label">Atribuir IP automaticamente</span>
                     </label>
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                      <input class="mdl-textfield__input" type="text" pattern="^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" id="wifi_ip" name="wifi_ip">
-                      <label class="mdl-textfield__label" for="wifi_ip">Endereço IP</label>
+                      <input class="mdl-textfield__input" type="text" pattern="^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" id="ip" name="ip" placeholder="192.168.0.7">
+                      <label class="mdl-textfield__label" for="ip">Endereço IP</label>
                       <span class="mdl-textfield__error">Valor não é um endereço IP válido!</span>
                     </div>
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                      <input class="mdl-textfield__input" type="text" pattern="^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" id="wifi_gateway" name="wifi_gateway">
-                      <label class="mdl-textfield__label" for="wifi_gateway">Endereço Gateway</label>
+                      <input class="mdl-textfield__input" type="text" pattern="^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" id="gateway" name="gateway" placeholder="192.168.0.1">
+                      <label class="mdl-textfield__label" for="gateway">Endereço Gateway</label>
                       <span class="mdl-textfield__error">Valor não é um endereço IP válido!</span>
-                    </div>       
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                      <input class="mdl-textfield__input" type="text" pattern="^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" id="mask" name="mask" placeholder="255.255.255.0">
+                      <label class="mdl-textfield__label" for="mask">Máscara de Subrede</label>
+                      <span class="mdl-textfield__error">Valor não é um endereço IP válido!</span>
+                    </div>    
                       <input class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit" value="Conectar">              
                 </form>
               </div>
