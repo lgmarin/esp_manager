@@ -30,9 +30,11 @@ bool openCaptivePortal(){
 }
 
 String scanNetworks() {
-  String json = "[";
+  String json;
   int n = WiFi.scanComplete();
 
+  json +=  "[";
+  //json += "{\"networks\": [";
   if(n == -2){
     // Scan not triggered, start scanning
     WiFi.scanNetworks(true);
@@ -50,8 +52,9 @@ String scanNetworks() {
     }
   }
   json += "]";
-  //server.send(200, "application/json", "{\"networks\": [" + str + "] }");
-  json = String();
+  //json += "] }";
+
+  return json;
 }
 
 void setup() {
@@ -68,7 +71,7 @@ void setup() {
     }).setFilter(ON_AP_FILTER);
 
     server.on("/scan", HTTP_GET, [](AsyncWebServerRequest *request){
-      request->send(200, "application/json", json);
+      request->send(200, "application/json", scanNetworks());
     });    
   }
   
