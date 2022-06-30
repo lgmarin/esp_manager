@@ -16,10 +16,16 @@ auto_ip.onchange = function() {
         document.querySelector("#ip").closest('.mdl-textfield').style.display = "none";
         document.querySelector("#gateway").closest('.mdl-textfield').style.display = "none";
         document.querySelector("#mask").closest('.mdl-textfield').style.display = "none";
+        document.getElementById("ip").required = false;
+        document.getElementById("gateway").required = false;
+        document.getElementById("mask").required = false;
     }else{
         document.querySelector("#ip").closest('.mdl-textfield').style.display = "";
         document.querySelector("#gateway").closest('.mdl-textfield').style.display = "";
         document.querySelector("#mask").closest('.mdl-textfield').style.display = "";
+        document.getElementById("ip").required = true;
+        document.getElementById("gateway").required = true;
+        document.getElementById("mask").required = true;
     }
 }
 
