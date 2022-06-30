@@ -5,6 +5,9 @@
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
 
+#define WIFI_RETRY_COUNT  3
+#define WIFI_RETRY_TIMEOUT 5000
+
 AsyncWebServer server(80);
 DNSServer dnsServer;
 
@@ -69,24 +72,45 @@ String scanNetworks() {
   return json;
 }
 
-void connectToWifi(String ssid, String pwd, String ip = "", String gw = "", String mask = "") {
-  
+bool connectToWifi(String ssid, String pwd, String ip = "", String gw = "", String mask = "") 
+{
+  if (ssid == "" && ssid == "")
+  {
+    Serial.println("\nERROR: Undefined SSID and Password.");
+    return false;
+  }
+
   Serial.println("Connecting to station: ");
   Serial.print(ssid);
-  if (ip == "" && gw == "")
+  if (ip != "" && gw != "" && mask != "")
   {
     IPAddress wifi_ip;
     IPAddress wifi_gw; 
     IPAddress wifi_mask; 
-    if (wifi_ip.fromString(ip) && wifi_gw.fromString(gw), wifi_mask.fromString(mask))
+    if (wifi_ip.fromString(ip) && wifi_gw.fromString(gw) && wifi_mask.fromString(mask))
     {
-      Serial.println("Using dynamic IP...");
-      WiFi.config(wifi_ip, wifi_gw, wifi_mask);
+      Serial.println("Using static IP...");
+      if(!WiFi.config(wifi_ip, wifi_gw, wifi_mask)){
+        Serial.println("\nERROR: Couldn't configure Wifi.");
+        return false;
+      }
     }
   }
   WiFi.disconnect();
+  delay(500);
+
+  WiFi.mode(WIFI_STA);
+
+  Serial.println("Connecting to WiFi...");
   WiFi.begin(ssid, password);
-  Serial.println(WiFi.waitForConnectResult());
+  
+  if(WiFi.waitForConnectResult(WIFI_RETRY_TIMEOUT) != WL_CONNECTED) {
+    Serial.println("Failed to connect.");
+    return false;
+  }
+  Serial.print("\nCONNECTED: Mode: STA, IP: ");
+  Serial.println(WiFi.localIP());
+  return true;
 }
 
 void setup() {
