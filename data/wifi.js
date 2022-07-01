@@ -48,12 +48,12 @@ function addRowHandlers() {
 }
 
 var res_test = {"networks": 
-                [{"SSID":"Teste 1", "Quality":"20"},
-                {"SSID":"Testesssss 2", "Quality":"50"},
-                {"SSID":"Teste 3", "Quality":"100"},
-                {"SSID":"Teste 4", "Quality":"20"},
-                {"SSID":"Teste 5", "Quality":"50"},
-                {"SSID":"Teste 6", "Quality":"100"}
+                [{"SSID":"Wifi 1", "Quality":"20"},
+                {"SSID":"Wifi 2", "Quality":"50"},
+                {"SSID":"Wifi 3", "Quality":"100"},
+                {"SSID":"Wifi 4", "Quality":"20"}
+                // {"SSID":"Wifi 5", "Quality":"50"},
+                // {"SSID":"Wifi 6", "Quality":"100"}
                 ]};
 
 
