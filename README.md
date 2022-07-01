@@ -5,7 +5,10 @@
 [![C++](https://img.shields.io/badge/C-++-blue.svg)]()
 [![PlatformIO](https://img.shields.io/badge/Platform-IO-blue.svg)](https://platformio.org/)
 
-![espmanager](/img/wifi_mgr.png "Wifi Connection Screen")
+<p align="center">
+  ![espmanager](/img/wifi_mgr.png "Wifi Connection Screen")
+</p>
+
 
 ## Objectives
 
