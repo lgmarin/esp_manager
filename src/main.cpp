@@ -9,11 +9,25 @@
 #define WIFI_RETRY_COUNT  3
 #define WIFI_RETRY_TIMEOUT 5000
 
+typedef struct
+{
+  char wifi_ssid[32];
+  char wifi_pw  [64];
+} WiFi_Credentials;
+
+typedef struct
+{
+  WiFi_Credentials  WiFi_Creds;
+  char host_name[32];
+  uint16_t checksum;
+} ESP_Config;
+
+ESP_Config  ESP_config;
+
 AsyncWebServer server(80);
 DNSServer dnsServer;
 
-const char* device = "esp-manager";
-const char* mdns_server = "espmanager";
+const char* host_name = "esp-manager";
 const char* ssid = "YOUR_SSID";
 const char* password = "YOUR_PASSWORD";
 
@@ -24,7 +38,7 @@ void notFound(AsyncWebServerRequest *request) {
 
 bool openCaptivePortal(){
   Serial.print("Starting soft-AP ... ");
-  if(WiFi.softAP(device)){
+  if(WiFi.softAP(host_name)){
     Serial.println("SofAP Started!");
     Serial.print("Soft-AP IP address = ");
     Serial.println(WiFi.softAPIP());
@@ -117,7 +131,7 @@ bool connectToWifi(String ssid, String pwd, String ip = "", String gw = "", Stri
 
 bool configuremDNS()
 {
-  if (!MDNS.begin("defumaiot")) {
+  if (!MDNS.begin(host_name)) {
     Serial.print(F("\n[ERROR]: MultiWiFi Configuration..."));
     return false;
   }
