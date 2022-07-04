@@ -6,7 +6,7 @@
 [![PlatformIO](https://img.shields.io/badge/Platform-IO-blue.svg)](https://platformio.org/)
 
 <p align="center">
-  <img width="200" src="https://raw.githubusercontent.com/lgmarin/esp_manager/main/img/wifi_mgr.png" alt="Material Bread logo">
+  <img width="250" src="https://raw.githubusercontent.com/lgmarin/esp_manager/main/img/wifi_mgr.png" alt="Material Bread logo">
 </p>
 
 

@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <DNSServer.h>
 #include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <LittleFS.h>
@@ -12,6 +13,7 @@ AsyncWebServer server(80);
 DNSServer dnsServer;
 
 const char* device = "esp-manager";
+const char* mdns_server = "espmanager";
 const char* ssid = "YOUR_SSID";
 const char* password = "YOUR_PASSWORD";
 
@@ -110,6 +112,18 @@ bool connectToWifi(String ssid, String pwd, String ip = "", String gw = "", Stri
   }
   Serial.print("\nCONNECTED: Mode: STA, IP: ");
   Serial.println(WiFi.localIP());
+  return true;
+}
+
+bool configuremDNS()
+{
+  if (!MDNS.begin("defumaiot")) {
+    Serial.print(F("\n[ERROR]: MultiWiFi Configuration..."));
+    return false;
+  }
+  // Add Web Server service to mDNS
+  MDNS.addService("http", "tcp", 80);
+  Serial.print(F("\n[INFO]: mDNS service started."));
   return true;
 }
 
