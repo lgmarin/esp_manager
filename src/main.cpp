@@ -13,7 +13,7 @@ typedef struct
 {
   char wifi_ssid[32];
   char wifi_pw  [64];
-} WiFi_Credentials;
+} WiFi_Credential;
 
 typedef struct
 {
@@ -24,10 +24,11 @@ typedef struct
 
 typedef struct
 {
-  WiFi_Credentials  WiFi_Creds;
+  WiFi_Credential  WiFi_Cred;
   Ip_Config Ip_config;
   char host_name[32];
-  bool dyn_ip;
+  bool dyn_ip = false;
+  bool ap_mode = false;
   uint16_t checksum;
 } ESP_Config;
 
@@ -46,12 +47,11 @@ void notFound(AsyncWebServerRequest *request) {
 }
 
 bool openCaptivePortal(){
-  Serial.print("Starting soft-AP ... ");
+  Serial.print(F("\n[INFO]: Starting soft-AP..."));
   if(WiFi.softAP(host_name)){
-    Serial.println("SofAP Started!");
-    Serial.print("Soft-AP IP address = ");
-    Serial.println(WiFi.softAPIP());
-    dnsServer.start(53, "*", WiFi.softAPIP());
+    Serial.print(F("\n[SUCCESS]: Captive Portal Started at IP: ")); Serial.print(WiFi.softAPIP());
+    if (!dnsServer.start(53, "*", WiFi.softAPIP()))
+  		Serial.print(F("\n[INFO]: Failed to start DNS service."));
     return true;
   }
   return false;
@@ -69,10 +69,9 @@ String scanNetworks() {
   if (currentMillis - lastScanMillis > SCAN_PERIOD)
   {
     canScan = true;
-    Serial.print("\nScan interval ... ");
+    Serial.print(F("\n[INFO]: Scanning networks... "));
     lastScanMillis = currentMillis;
   }
-
   //json +=  "[";
   json += "{\"networks\": [";
   if(n == -2 && canScan){
@@ -101,24 +100,23 @@ bool connectToWifi(String ssid, String pwd, String ip = "", String gw = "", Stri
 {
   if (ssid == "" && ssid == "")
   {
-    Serial.println("\nERROR: Undefined SSID and Password.");
+    Serial.print(F("\n[ERROR]: Empty SSID or Password."));
     return false;
   }
 
-  Serial.println("Connecting to station: ");
-  Serial.print(ssid);
+  Serial.print(F("\n[INFO]: Connecting to station: ")); Serial.print(ssid);
+
   if (ip != "" && gw != "" && mask != "")
   {
     IPAddress wifi_ip;
-    IPAddress wifi_gw; 
-    IPAddress wifi_mask; 
+    IPAddress wifi_gw;
+    IPAddress wifi_mask;
     if (wifi_ip.fromString(ip) && wifi_gw.fromString(gw) && wifi_mask.fromString(mask))
     {
-      Serial.println("Using static IP...");
       if(!WiFi.config(wifi_ip, wifi_gw, wifi_mask)){
-        Serial.println("\nERROR: Couldn't configure Wifi.");
-        return false;
+        Serial.print(F("\n[ERROR]: Unable to configure wifi. Using Dynamic IP."));
       }
+      Serial.print(F("\n[INFO]: Using static IP..."));
     }
   }
   WiFi.disconnect();
@@ -126,32 +124,33 @@ bool connectToWifi(String ssid, String pwd, String ip = "", String gw = "", Stri
 
   WiFi.mode(WIFI_STA);
 
-  Serial.println("Connecting to WiFi...");
+  Serial.print(F("\n[INFO]: Connecting to WiFi..."));
   WiFi.begin(ssid, password);
   
   if(WiFi.waitForConnectResult(WIFI_RETRY_TIMEOUT) != WL_CONNECTED) {
-    Serial.println("Failed to connect.");
+    Serial.print(F("\n[ERROR]: Failed to connect."));
     return false;
   }
-  Serial.print("\nCONNECTED: Mode: STA, IP: ");
-  Serial.println(WiFi.localIP());
+  Serial.print(F("\n[SUCCESS]: CONNECTED: Mode: STA, SSID: ")); Serial.print(WiFi.SSID());
+  Serial.print(F(" IP: ")); Serial.print(WiFi.localIP());
   return true;
 }
 
 bool configuremDNS()
 {
   if (!MDNS.begin(host_name)) {
-    Serial.print(F("\n[ERROR]: MultiWiFi Configuration..."));
+    Serial.print(F("\n[ERROR]: mDNS service error."));
     return false;
   }
   // Add Web Server service to mDNS
   MDNS.addService("http", "tcp", 80);
-  Serial.print(F("\n[INFO]: mDNS service started."));
+  Serial.print(F("\n[INFO]: mDNS service started. Host: ")); Serial.print(host_name);
   return true;
 }
 
 void setup() {
   Serial.begin(115200);
+  delay(500);
 
   // Setup LittleFS
   server.serveStatic("/", LittleFS, "/");
@@ -173,15 +172,22 @@ void setup() {
     });
 
     server.on("/connect", HTTP_GET, [] (AsyncWebServerRequest *request) {
-        if (request->hasParam("auto-ip") && request->hasParam("ssid") && request->hasParam("password")) {
-          connectToWifi(request->getParam("ssid")->value(), request->getParam("password")->value());
-        } else if (request->hasParam("ip") && request->hasParam("gateway") && request->hasParam("ssid") && request->hasParam("password"))
-        {
-          connectToWifi(request->getParam("ssid")->value(), request->getParam("password")->value(),\
-                        request->getParam("ip")->value(), request->getParam("gateway")->value());
-        }
-        request->send(200, "application/json", "{\"status\": \"connecting\" }");
-      });
+      bool result = false;
+
+      if (request->hasParam("auto-ip") && request->hasParam("ssid") && request->hasParam("password")) {
+        result = connectToWifi(request->getParam("ssid")->value(), request->getParam("password")->value());
+      } 
+      else if (request->hasParam("ip") && request->hasParam("gateway") && request->hasParam("ssid") && request->hasParam("password"))
+      {
+        result = connectToWifi(request->getParam("ssid")->value(), request->getParam("password")->value(),\
+                  request->getParam("ip")->value(), request->getParam("gateway")->value());
+      }
+
+      if (result)
+        request->send(200, "application/json", "{\"status\": \"connected\" }");
+
+      request->send(200, "application/json", "{\"status\": \"error\" }");
+    });
   }
   
   server.begin();
