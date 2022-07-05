@@ -17,8 +17,17 @@ typedef struct
 
 typedef struct
 {
+  IPAddress ip_addr;
+  IPAddress gw_addr;
+  IPAddress mask;
+} Ip_Config;
+
+typedef struct
+{
   WiFi_Credentials  WiFi_Creds;
+  Ip_Config Ip_config;
   char host_name[32];
+  bool dyn_ip;
   uint16_t checksum;
 } ESP_Config;
 
