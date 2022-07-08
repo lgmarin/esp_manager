@@ -9,6 +9,8 @@ const char*        password;
 long               lastScanMillis;
 long               currentMillis;
 
+Wifi_Config        Wifi_config;
+
 bool openCaptivePortal()
 {
     Serial.print(F("\n[INFO]: Starting soft-AP..."));
@@ -81,7 +83,7 @@ bool configuremDNS()
 
 bool connectToWifi(String ssid, String pwd, String ip, String gw, String mask) 
 {
-    if (ssid == "" && ssid == "")
+    if (ssid == "" || pwd == "")
     {
         Serial.print(F("\n[ERROR]: Empty SSID or Password."));
         return false;
