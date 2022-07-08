@@ -1,4 +1,4 @@
-#include <wifi.h>
+#include <wifiConfig.h>
 
 DNSServer dnsServer;
 
@@ -72,7 +72,7 @@ bool configuremDNS()
 }
 
 
-bool connectToWifi(String ssid, String pwd, String ip = "", String gw = "", String mask = "") 
+bool connectToWifi(String ssid, String pwd, String ip, String gw, String mask) 
 {
     if (ssid == "" && ssid == "")
     {
@@ -112,6 +112,7 @@ bool connectToWifi(String ssid, String pwd, String ip = "", String gw = "", Stri
     Serial.print(F(" IP: ")); Serial.print(WiFi.localIP());
     return true;
 }
+
 
 void dnsProcessNext()
 {

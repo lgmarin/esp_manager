@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <definitions.h>
-#include <wifi.h>
+#include <wifiConfig.h>
 
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>

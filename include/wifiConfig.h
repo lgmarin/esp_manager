@@ -1,13 +1,11 @@
-#ifndef wifi_h
-#define wifi_h
+#ifndef wifiConfig_h
+#define wifiConfig_h
+
 #include <definitions.h>
 #include <Arduino.h>
 #include <DNSServer.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
-
-long lastScanMillis;
-long currentMillis;
 
 typedef struct
 {
@@ -20,12 +18,12 @@ typedef struct
   IPAddress ip_addr;
   IPAddress gw_addr;
   IPAddress mask;
-} Ip_Config;
+} IP_Config;
 
 typedef struct
 {
   WiFi_Credential  WiFi_Cred;
-  Ip_Config Ip_config;
+  IP_Config IP_config;
   char host_name[32];
   bool dyn_ip = false;
   bool ap_mode = false;
@@ -33,10 +31,13 @@ typedef struct
 } Wifi_Config;
 
 // GLOBAL VARIABLES
-extern Wifi_Config  Wifi_config;
-extern const char* host_name = "esp-manager";
-extern const char* ssid;
-extern const char* password;
+extern Wifi_Config        Wifi_config;
+
+const char*        host_name;
+const char*        ssid;
+const char*        password;
+long               lastScanMillis;
+long               currentMillis;
 
 // PUBLIC FUNCTIONS
 bool openCaptivePortal();
