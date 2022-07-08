@@ -31,13 +31,10 @@ typedef struct
 } Wifi_Config;
 
 // GLOBAL VARIABLES
-extern Wifi_Config        Wifi_config;
-
-const char*        host_name;
-const char*        ssid;
-const char*        password;
-long               lastScanMillis;
-long               currentMillis;
+extern Wifi_Config              Wifi_config;
+extern const char*              host_name;
+extern const char*              ssid;
+extern const char*              password;
 
 // PUBLIC FUNCTIONS
 bool openCaptivePortal();

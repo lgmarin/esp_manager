@@ -10,8 +10,10 @@
 #define WIFI_RETRY_TIMEOUT      5000
 #define SCAN_PERIOD             3500
 #define DEFAULT_HOSTNAME        "ESP_MANAGER"
-
 #define HTTP_PORT               80
 
+/*
+*           WIFI DEFINITIONS
+*/
 
 #endif

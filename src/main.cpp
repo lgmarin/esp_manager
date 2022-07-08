@@ -59,5 +59,5 @@ void setup() {
 }
 
 void loop() {
-
+  Serial.print(host_name);
 }

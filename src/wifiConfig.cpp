@@ -2,6 +2,13 @@
 
 DNSServer dnsServer;
 
+const char*        host_name;
+const char*        ssid;
+const char*        password;
+
+long               lastScanMillis;
+long               currentMillis;
+
 bool openCaptivePortal()
 {
     Serial.print(F("\n[INFO]: Starting soft-AP..."));
