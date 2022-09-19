@@ -11,7 +11,7 @@
  */
 class ConfigManager
 {
-private:
+protected:
     bool _debug = false;
     void _listFSFiles(String dir_path);
     bool _initFS(bool listFiles);
@@ -22,6 +22,12 @@ private:
 public:
     ConfigManager();
     ConfigManager(bool debug);
+};
+
+class WifiConfig : ConfigManager
+{
+public:
+    bool isDebug();
 };
 
 #endif

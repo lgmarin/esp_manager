@@ -11,7 +11,7 @@ long               currentMillis;
 
 Wifi_Config        Wifi_config;
 
-ConfigManager confManager(true);
+Wifi_Config confManager;
 
 bool openCaptivePortal()
 {

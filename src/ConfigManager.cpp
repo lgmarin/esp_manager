@@ -140,3 +140,10 @@ ConfigManager::ConfigManager(bool debug)
   _debug = debug;
   _initFS(debug);
 }
+
+
+bool WifiConfig::isDebug()
+{
+  Serial.print(_debug);
+  return _debug;
+}
