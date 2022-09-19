@@ -14,9 +14,4 @@
 #define DEFAULT_TO_AP           true
 #define WIFI_CFG_FILE           F("/wifi_cfg.dat")
 
-
-/*
-*           WIFI DEFINITIONS
-*/
-
 #endif

@@ -11,6 +11,8 @@ long               currentMillis;
 
 Wifi_Config        Wifi_config;
 
+ConfigManager confManager(true);
+
 bool openCaptivePortal()
 {
     Serial.print(F("\n[INFO]: Starting soft-AP..."));

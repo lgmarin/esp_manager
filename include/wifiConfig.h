@@ -7,6 +7,8 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 
+#include "ConfigManager.h"
+
 typedef struct
 {
   char wifi_ssid[32];
