@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <definitions.h>
 
 void setup()
@@ -9,4 +8,5 @@ void setup()
 
 void loop()
 {
+  
 }
