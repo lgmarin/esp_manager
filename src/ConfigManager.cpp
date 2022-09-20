@@ -129,13 +129,15 @@ uint16_t ConfigManager::_calcChecksum(uint8_t* address, uint16_t sizeToCalc)
   return checkSum;
 }
 
-ConfigManager::ConfigManager()
+
+
+WifiConfig::WifiConfig()
 {
   _debug = false;
   _initFS(false);
 }
 
-ConfigManager::ConfigManager(bool debug)
+WifiConfig::WifiConfig(bool debug)
 {
   _debug = debug;
   _initFS(debug);

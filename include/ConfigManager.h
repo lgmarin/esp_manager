@@ -19,15 +19,14 @@ protected:
     bool _loadFSData(void *str_Config, size_t size, char* filename);
     bool _saveFSData(void *str_Config, size_t size, char* filename);
     uint16_t _calcChecksum(uint8_t* address, uint16_t sizeToCalc);
-public:
-    ConfigManager();
-    ConfigManager(bool debug);
 };
 
 class WifiConfig : ConfigManager
 {
 public:
     bool isDebug();
+    WifiConfig();
+    WifiConfig(bool debug);
 };
 
 #endif
