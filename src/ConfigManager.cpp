@@ -51,7 +51,7 @@ bool ConfigManager::_initFS(bool listFiles)
  *  @param filename Filename to load.
  *  @return Returns true if successful.
  */
-bool ConfigManager::_loadFSData(void *str_Config, size_t size, char* filename)
+bool ConfigManager::_loadFSData(void *str_Config, size_t size, const char* filename)
 {
   File file = LittleFS.open(filename, "r");
   memset(str_Config, 0, size);
@@ -75,7 +75,7 @@ bool ConfigManager::_loadFSData(void *str_Config, size_t size, char* filename)
  *  @param filename Filename to save.
  *  @return Returns true if successful.
  */
-bool ConfigManager::_saveFSData(void *str_Config, size_t size, char* filename)
+bool ConfigManager::_saveFSData(void *str_Config, size_t size, const char* filename)
 {
   File file = LittleFS.open(filename, "w");
 
@@ -96,7 +96,7 @@ bool ConfigManager::_saveFSData(void *str_Config, size_t size, char* filename)
  *  @param filename Filename to remove.
  *  @return Returns true if successful.
  */
-bool ConfigManager::_removeFSData(char* filename)
+bool ConfigManager::_removeFSData(const char* filename)
 {
   if (LittleFS.exists(filename))
   {

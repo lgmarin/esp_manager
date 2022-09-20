@@ -15,9 +15,9 @@ protected:
     bool _debug = false;
     void _listFSFiles(String dir_path);
     bool _initFS(bool listFiles);
-    bool _removeFSData(char* filename);
-    bool _loadFSData(void *str_Config, size_t size, char* filename);
-    bool _saveFSData(void *str_Config, size_t size, char* filename);
+    bool _removeFSData(const char* filename);
+    bool _loadFSData(void *str_Config, size_t size, const char* filename);
+    bool _saveFSData(void *str_Config, size_t size, const char* filename);
     uint16_t _calcChecksum(uint8_t* address, uint16_t sizeToCalc);
 };
 
