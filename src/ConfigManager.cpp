@@ -1,25 +1,7 @@
 #include "ConfigManager.h"
 
-Wifi_Config        Wifi_config;
-Device_Config      Device_config;
-
 const char* wifi_config_file PROGMEM = "/wifi.cfg";
 const char* device_config_file PROGMEM = "/device.cfg";
-
-/* ConfigManager CONSTRUCTOR */
-
-ConfigManager::ConfigManager()
-{
-  _debug = false;
-  _initFS(false);
-}
-
-ConfigManager::ConfigManager(bool debug)
-{
-  _debug = debug;
-  _initFS(debug);
-}
-
 
 /*!
  *  @brief  Return the content of dir in the FS on the Serial Console.
@@ -45,7 +27,7 @@ void ConfigManager::_listFSFiles(String dir_path)
  *  @brief  Initialize LittleFS.
  *  @return Returns true if initialized successfully.
  */
-bool ConfigManager::_initFS(bool listFiles) 
+bool ConfigManager::begin(bool listFiles) 
 {
   if (!LittleFS.begin()) {
     Serial.print(F("\n[ERROR]: An error has occurred while mounting LittleFS"));
@@ -288,12 +270,6 @@ bool ConfigManager::storeDeviceConfig(String host_name, String air_v, String wat
   if ((String(Device_config.host_name) == ""))
     Serial.println(F("[WARNING]: Null hostname!"));
 
-  //SAVE AIR_V
-  Device_config.air_value = air_v.toInt();
-
-  //SAVE WAT_V
-  Device_config.wat_value = wat_v.toInt();
-
   //SAVE AP_MODE
   Device_config.ap_mode = apmode;
 
@@ -322,20 +298,4 @@ bool ConfigManager::removeDeviceConfig()
   return false;
 }
 
-
-/*!
- *  @brief  Set parameters to factory default (see definitions.h).
- */
-void defaultDeviceConfig()
-{
-  Serial.print(F("\n[WARNING]: USING DEFAULT VALUES!"));
-  //storeString(String(DEFAULT_HOSTNAME), Device_config.host_name);
-  if (strlen(String(DEFAULT_HOSTNAME).c_str()) < sizeof(Device_config.host_name) - 1)
-    strcpy(Device_config.host_name, String(DEFAULT_HOSTNAME).c_str());
-  else
-    strncpy(Device_config.host_name, String(DEFAULT_HOSTNAME).c_str(), sizeof(Device_config.host_name) - 1);
-
-  //Device_config.air_value = DEF_CAL_AIR;
-  //Device_config.wat_value = DEF_CAL_WAT;
-  Device_config.ap_mode   = DEFAULT_TO_AP;  
-}
+ConfigManager configManager;

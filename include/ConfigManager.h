@@ -10,31 +10,30 @@ typedef struct
 {
   char wifi_ssid[32];
   char wifi_pw  [64];
-} WiFi_Credential;
+} WiFiCredential;
 
 typedef struct
 {
   IPAddress ip_addr{};
   IPAddress gw_addr{};
   IPAddress mask{};
-} IP_Config;
+} IPConfig;
 
 typedef struct
 {
-  WiFi_Credential   WiFi_cred{};
-  IP_Config         IP_config{};
+  WiFiCredential   WiFi_cred{};
+  IPConfig         IP_config{};
   bool              dyn_ip = false;
   uint16_t          checksum{};
-} Wifi_Config;
+} WifiConfig;
 
 typedef struct
 {
   char       host_name[24]{};
   bool       ap_mode = false;
-  uint16_t   air_value{};
-  uint16_t   wat_value{};
   uint16_t   checksum{};
-} Device_Config;
+} DeviceConfig;
+
 
 /**
  * @brief ConfigManager - Creates a configuration structure
@@ -46,7 +45,7 @@ class ConfigManager
 private:
     bool _debug = false;
     void _listFSFiles(String dir_path);
-    bool _initFS(bool listFiles);
+
     bool _removeFSData(const char* filename);
     bool _loadFSData(void *str_Config, size_t size, const char* filename);
     bool _saveFSData(void *str_Config, size_t size, const char* filename);
@@ -54,11 +53,13 @@ private:
     bool _initDeviceConfiguration();
 
 public:
-    //Constructor
-    ConfigManager();
-    ConfigManager(bool debug);
+    //Config Structs
+    WifiConfig Wifi_config;
+    DeviceConfig Device_config;
 
     //Public Methods
+    bool begin(bool listFiles);
+
     bool loadWifiConfig();
     bool storeWifiConfig(String SSID, String password, bool dyn_ip, IPAddress ip, IPAddress gw, IPAddress mask);
     bool removeWifiConfig();
@@ -67,5 +68,7 @@ public:
     bool storeDeviceConfig(String host_name, String air_v, String wat_v, bool apmode);
     bool removeDeviceConfig();
 };
+
+extern ConfigManager configManager;
 
 #endif
