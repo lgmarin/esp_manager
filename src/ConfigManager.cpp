@@ -1,3 +1,4 @@
+#include <LittleFS.h>
 #include "ConfigManager.h"
 
 const char* wifi_config_file PROGMEM = "/wifi.cfg";
@@ -218,42 +219,42 @@ void ConfigManager::storeCharString(char *charDestination, const char *charStrin
  *  @brief  Store WifiConfiguration into LitteFS.
  *  @return Returns true if configuration saved successfully.
  */
-bool ConfigManager::storeWifiConfig(String SSID, String password, bool dyn_ip, IPAddress ip, IPAddress gw, IPAddress mask)
-{
-  //SAVE SSID
+// bool ConfigManager::storeWifiConfig(String SSID, String password, bool dyn_ip, IPAddress ip, IPAddress gw, IPAddress mask)
+// {
+//   //SAVE SSID
   
-  if (strlen(SSID.c_str()) < sizeof(Wifi_config.WiFi_cred.wifi_ssid) - 1)
-    strcpy(Wifi_config.WiFi_cred.wifi_ssid, SSID.c_str());
-  else
-    strncpy(Wifi_config.WiFi_cred.wifi_ssid, SSID.c_str(), sizeof(Wifi_config.WiFi_cred.wifi_ssid) - 1);
+//   if (strlen(SSID.c_str()) < sizeof(Wifi_config.WiFi_cred.wifi_ssid) - 1)
+//     strcpy(Wifi_config.WiFi_cred.wifi_ssid, SSID.c_str());
+//   else
+//     strncpy(Wifi_config.WiFi_cred.wifi_ssid, SSID.c_str(), sizeof(Wifi_config.WiFi_cred.wifi_ssid) - 1);
 
-  //SAVE PWD
-  if (strlen(password.c_str()) < sizeof(Wifi_config.WiFi_cred.wifi_pw) - 1)
-    strcpy(Wifi_config.WiFi_cred.wifi_pw, password.c_str());
-  else
-    strncpy(Wifi_config.WiFi_cred.wifi_pw, password.c_str(), sizeof(Wifi_config.WiFi_cred.wifi_pw) - 1);  
+//   //SAVE PWD
+//   if (strlen(password.c_str()) < sizeof(Wifi_config.WiFi_cred.wifi_pw) - 1)
+//     strcpy(Wifi_config.WiFi_cred.wifi_pw, password.c_str());
+//   else
+//     strncpy(Wifi_config.WiFi_cred.wifi_pw, password.c_str(), sizeof(Wifi_config.WiFi_cred.wifi_pw) - 1);  
 
-  if ((String(Wifi_config.WiFi_cred.wifi_ssid) == "") && (String(Wifi_config.WiFi_cred.wifi_pw) == ""))
-    Serial.println(F("[WARNING]: Null SSID or Password!"));
+//   if ((String(Wifi_config.WiFi_cred.wifi_ssid) == "") && (String(Wifi_config.WiFi_cred.wifi_pw) == ""))
+//     Serial.println(F("[WARNING]: Null SSID or Password!"));
 
-  //SAVE IP
-  Wifi_config.IP_config.ip_addr = ip;
-  Wifi_config.IP_config.gw_addr = gw;
-  Wifi_config.IP_config.mask = mask;
+//   //SAVE IP
+//   Wifi_config.IP_config.ip_addr = ip;
+//   Wifi_config.IP_config.gw_addr = gw;
+//   Wifi_config.IP_config.mask = mask;
 
-  Wifi_config.dyn_ip = dyn_ip;
+//   Wifi_config.dyn_ip = dyn_ip;
   
-  //Calculate checksum and save credentials
-  Wifi_config.checksum = _calcChecksum((uint8_t*) &Wifi_config, sizeof(Wifi_config) - sizeof(Wifi_config.checksum));
-  if (_saveFSData(&Wifi_config, sizeof(Wifi_config), (char*) wifi_config_file))
-  {
-    Serial.print(F("\n[INFO]: Wifi Credentials file saved!"));
-    return true;
-  }
+//   //Calculate checksum and save credentials
+//   Wifi_config.checksum = _calcChecksum((uint8_t*) &Wifi_config, sizeof(Wifi_config) - sizeof(Wifi_config.checksum));
+//   if (_saveFSData(&Wifi_config, sizeof(Wifi_config), (char*) wifi_config_file))
+//   {
+//     Serial.print(F("\n[INFO]: Wifi Credentials file saved!"));
+//     return true;
+//   }
 
-  Serial.print(F("\n[ERROR]: Could not store Wifi Config File"));
-  return false;
-}
+//   Serial.print(F("\n[ERROR]: Could not store Wifi Config File"));
+//   return false;
+// }
 
 /*!
  *  @brief  Remove WifiConfiguration from LitteFS.
@@ -271,31 +272,31 @@ bool ConfigManager::removeWifiConfig()
  *  @brief  Store Device Configuration into LitteFS.
  *  @return Returns true if configuration saved successfully.
  */
-bool ConfigManager::storeDeviceConfig(const char* host_name, bool apmode)
-{
-  //SAVE HOSTNAME
-  if (strlen(host_name) < sizeof(Device_config.host_name) - 1)
-    strcpy(Device_config.host_name, host_name);
-  else
-    strncpy(Device_config.host_name, host_name, sizeof(Device_config.host_name) - 1);
+// bool ConfigManager::storeDeviceConfig(const char* host_name, bool apmode)
+// {
+//   //SAVE HOSTNAME
+//   if (strlen(host_name) < sizeof(Device_config.host_name) - 1)
+//     strcpy(Device_config.host_name, host_name);
+//   else
+//     strncpy(Device_config.host_name, host_name, sizeof(Device_config.host_name) - 1);
 
-  if ((String(Device_config.host_name) == ""))
-    Serial.println(F("[WARNING]: Null hostname!"));
+//   if ((String(Device_config.host_name) == ""))
+//     Serial.println(F("[WARNING]: Null hostname!"));
 
-  //SAVE AP_MODE
-  Device_config.ap_mode = apmode;
+//   //SAVE AP_MODE
+//   Device_config.ap_mode = apmode;
 
-  //Calculate checksum and save credentials
-  Device_config.checksum = _calcChecksum((uint8_t*) &Device_config, sizeof(Device_config) - sizeof(Device_config.checksum));
-  if (_saveFSData(&Device_config, sizeof(Device_config), (char*) device_config_file))
-  {
-    Serial.print(F("\n[INFO]: Device config file saved!"));
-    return true;
-  }
+//   //Calculate checksum and save credentials
+//   Device_config.checksum = _calcChecksum((uint8_t*) &Device_config, sizeof(Device_config) - sizeof(Device_config.checksum));
+//   if (_saveFSData(&Device_config, sizeof(Device_config), (char*) device_config_file))
+//   {
+//     Serial.print(F("\n[INFO]: Device config file saved!"));
+//     return true;
+//   }
 
-  Serial.print(F("\n[ERROR]: Could not store Devices Config File"));
-  return false;
-}
+//   Serial.print(F("\n[ERROR]: Could not store Devices Config File"));
+//   return false;
+// }
 
 /*!
  *  @brief  Remove Device Configuration from LitteFS.

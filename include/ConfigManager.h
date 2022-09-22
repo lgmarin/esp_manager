@@ -1,8 +1,6 @@
 #ifndef ConfigManager_h
 #define ConfigManager_h
 
-#include <LittleFS.h>
-#include <ESP8266WiFi.h>
 #include "definitions.h"
 
 // CONFIGURATIONS STRUCTS
@@ -14,9 +12,9 @@ typedef struct
 
 typedef struct
 {
-  IPAddress ip_addr{};
-  IPAddress gw_addr{};
-  IPAddress mask{};
+  uint32_t ip_addr{};
+  uint32_t gw_addr{};
+  uint32_t mask{};
 } IPConfig;
 
 typedef struct
@@ -64,10 +62,10 @@ public:
     void storeCharString(char *charDestination, const char *charString);
 
     
-    bool storeWifiConfig(String SSID, String password, bool dyn_ip, IPAddress ip, IPAddress gw, IPAddress mask);
+    //bool storeWifiConfig(String SSID, String password, bool dyn_ip, IPAddress ip, IPAddress gw, IPAddress mask);
     bool removeWifiConfig();
 
-    bool storeDeviceConfig(const char* host_name, bool apmode);
+    //bool storeDeviceConfig(const char* host_name, bool apmode);
     bool removeDeviceConfig();
 
     void saveConfig();
