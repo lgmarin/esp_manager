@@ -23,8 +23,8 @@ typedef struct
 {
   WiFiCredential   WiFi_cred{};
   IPConfig         IP_config{};
-  bool              dyn_ip = false;
-  uint16_t          checksum{};
+  bool             dyn_ip = false;
+  uint16_t         checksum{};
 } WifiConfig;
 
 typedef struct
@@ -33,7 +33,6 @@ typedef struct
   bool       ap_mode = false;
   uint16_t   checksum{};
 } DeviceConfig;
-
 
 /**
  * @brief ConfigManager - Creates a configuration structure
@@ -55,6 +54,7 @@ private:
     bool _loadDeviceConfig();
 
 public:
+    bool request_save = false;
     //Config Structs
     WifiConfig Wifi_config;
     DeviceConfig Device_config;
@@ -69,6 +69,8 @@ public:
 
     bool storeDeviceConfig(const char* host_name, bool apmode);
     bool removeDeviceConfig();
+
+    void saveConfig();
 };
 
 extern ConfigManager configManager;

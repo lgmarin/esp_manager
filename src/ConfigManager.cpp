@@ -149,7 +149,7 @@ bool ConfigManager::_loadDeviceConfig()
     if ( Device_config.checksum != _calcChecksum( (uint8_t*) &Device_config, sizeof(Device_config) - sizeof(Device_config.checksum) ) )
     {
       Serial.print(F("\n[ERROR]: Device config checksum wrong!"));
-      return false;
+      return false; // NEED to rewrite if the file fails, fallback to defaults...
     }
 
     if ((String(Device_config.host_name) == ""))
@@ -221,6 +221,7 @@ void ConfigManager::storeCharString(char *charDestination, const char *charStrin
 bool ConfigManager::storeWifiConfig(String SSID, String password, bool dyn_ip, IPAddress ip, IPAddress gw, IPAddress mask)
 {
   //SAVE SSID
+  
   if (strlen(SSID.c_str()) < sizeof(Wifi_config.WiFi_cred.wifi_ssid) - 1)
     strcpy(Wifi_config.WiFi_cred.wifi_ssid, SSID.c_str());
   else
@@ -296,7 +297,6 @@ bool ConfigManager::storeDeviceConfig(const char* host_name, bool apmode)
   return false;
 }
 
-
 /*!
  *  @brief  Remove Device Configuration from LitteFS.
  *  @return Returns true if configuration removed successfully.
@@ -307,6 +307,26 @@ bool ConfigManager::removeDeviceConfig()
     return true;
 
   return false;
+}
+
+void ConfigManager::saveConfig()
+{
+  uint16_t new_DeviceSum = 0;
+  uint16_t new_WifiSum = 0;
+  
+  new_DeviceSum = _calcChecksum((uint8_t*) &Device_config, sizeof(Device_config) - sizeof(Device_config.checksum));
+  if (Device_config.checksum != new_DeviceSum)
+  {
+    if (_saveFSData(&Device_config, sizeof(Device_config), (char*) device_config_file))
+      Serial.print(PSTR("\n[INFO]: Device config file saved!"));
+  }
+
+  new_WifiSum = _calcChecksum((uint8_t*) &Wifi_config, sizeof(Wifi_config) - sizeof(Wifi_config.checksum));
+  if (Wifi_config.checksum != new_WifiSum)
+  {
+    if (_saveFSData(&Wifi_config, sizeof(Wifi_config), (char*) wifi_config_file))
+      Serial.print(PSTR("\n[INFO]: Wifi config file saved!"));
+  }
 }
 
 ConfigManager configManager;
