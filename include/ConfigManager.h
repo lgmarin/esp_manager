@@ -50,7 +50,9 @@ private:
     bool _loadFSData(void *str_Config, size_t size, const char* filename);
     bool _saveFSData(void *str_Config, size_t size, const char* filename);
     uint16_t _calcChecksum(uint8_t* address, uint16_t sizeToCalc);
-    bool _initDeviceConfiguration();
+
+    bool _loadWifiConfig();
+    bool _loadDeviceConfig();
 
 public:
     //Config Structs
@@ -59,12 +61,12 @@ public:
 
     //Public Methods
     bool begin(bool listFiles);
+    void storeCharString(char *charDestination, const char *charString);
 
-    bool loadWifiConfig();
+    
     bool storeWifiConfig(String SSID, String password, bool dyn_ip, IPAddress ip, IPAddress gw, IPAddress mask);
     bool removeWifiConfig();
 
-    bool loadDeviceConfig();
     bool storeDeviceConfig(const char* host_name, bool apmode);
     bool removeDeviceConfig();
 };

@@ -108,39 +108,11 @@ uint16_t ConfigManager::_calcChecksum(uint8_t* address, uint16_t sizeToCalc)
   return checkSum;
 }
 
-/*    PUBLIC FUNCTIONS */
-
-/*!
- *  @brief  Initialize LittleFS.
- *  @return Returns true if initialized successfully.
- */
-bool ConfigManager::begin(bool listFiles) 
-{
-  if (!LittleFS.begin()) {
-    Serial.print(F("\n[ERROR]: An error has occurred while mounting LittleFS"));
-    return false;
-  }
-  else
-  {
-    Serial.print(F("\n[INFO]: LittleFS mounted successfully"));
-    
-    if (listFiles)
-    {
-      Serial.print(F("\n[INFO]: Listing files...\n"));
-      _listFSFiles("/");
-    }
-
-    return true;
-  }
-}
-
-/* ConfigManager PUBLIC METHODS */
-
 /*!
  *  @brief  Load WifiConfiguration saved in LitteFS.
  *  @return Returns true if configuration loaded successfully.
  */
-bool ConfigManager::loadWifiConfig()
+bool ConfigManager::_loadWifiConfig()
 {
   if(_loadFSData(&Wifi_config, sizeof(Wifi_config), (char*) wifi_config_file))
   {
@@ -164,6 +136,82 @@ bool ConfigManager::loadWifiConfig()
     Serial.print(F("\n[ERROR]: Could not read Wifi Config File."));
     return false;
   }
+}
+
+/*!
+ *  @brief  Load Device Configuration saved in LitteFS.
+ *  @return Returns true if configuration loaded successfully.
+ */
+bool ConfigManager::_loadDeviceConfig()
+{
+  if(_loadFSData(&Device_config, sizeof(Device_config), (char*) device_config_file))
+  {
+    if ( Device_config.checksum != _calcChecksum( (uint8_t*) &Device_config, sizeof(Device_config) - sizeof(Device_config.checksum) ) )
+    {
+      Serial.print(F("\n[ERROR]: Device config checksum wrong!"));
+      return false;
+    }
+
+    if ((String(Device_config.host_name) == ""))
+    {
+      Serial.print(F("\n[ERROR]: Hostname is empty, using default!"));
+      if (strlen(String(DEFAULT_HOSTNAME).c_str()) < sizeof(Device_config.host_name) - 1)
+        strcpy(Device_config.host_name, String(DEFAULT_HOSTNAME).c_str());
+      else
+        strncpy(Device_config.host_name, String(DEFAULT_HOSTNAME).c_str(), sizeof(Device_config.host_name) - 1);
+    }
+    Serial.print(F("\n[INFO]: Device Config File Read. Checksum ok."));
+    return true; 
+  }
+  else
+  {
+    Serial.print(F("\n[ERROR]: Could not read device Config File."));
+    return false;
+  }
+}
+
+//
+/*                                             ConfigManager PUBLIC METHODS                                               */
+//
+
+/*!
+ *  @brief  Initialize LittleFS.
+ *  @return Returns true if initialized successfully.
+ */
+bool ConfigManager::begin(bool listFiles) 
+{
+  if (!LittleFS.begin()) {
+    Serial.print(F("\n[ERROR]: An error has occurred while mounting LittleFS"));
+    return false;
+  }
+  else
+  {
+    Serial.print(F("\n[INFO]: LittleFS mounted successfully"));
+    
+    if (listFiles)
+    {
+      Serial.print(F("\n[INFO]: Listing files...\n"));
+      _listFSFiles("/");
+    }
+
+    
+
+    return true;
+  }
+}
+
+/**
+ * @brief Store a char string in a char inside the config struct
+ * 
+ * @param charDestination char in the config struct to populate.
+ * @param charString char to save in the struct.
+ */
+void ConfigManager::storeCharString(char *charDestination, const char *charString)
+{
+  if (strlen(charString) < sizeof(charDestination) - 1)
+    strcpy(charDestination, charString);
+  else
+    strncpy(charDestination, charString, sizeof(charDestination) - 1);  
 }
 
 /*!
@@ -217,43 +265,6 @@ bool ConfigManager::removeWifiConfig()
 
   return false;
 }
-
-///
-///     DEVICE CONFIGURATION FILE
-///
-
-/*!
- *  @brief  Load Device Configuration saved in LitteFS.
- *  @return Returns true if configuration loaded successfully.
- */
-bool ConfigManager::loadDeviceConfig()
-{
-  if(_loadFSData(&Device_config, sizeof(Device_config), (char*) device_config_file))
-  {
-    if ( Device_config.checksum != _calcChecksum( (uint8_t*) &Device_config, sizeof(Device_config) - sizeof(Device_config.checksum) ) )
-    {
-      Serial.print(F("\n[ERROR]: Device config checksum wrong!"));
-      return false;
-    }
-
-    if ((String(Device_config.host_name) == ""))
-    {
-      Serial.print(F("\n[ERROR]: Hostname is empty, using default!"));
-      if (strlen(String(DEFAULT_HOSTNAME).c_str()) < sizeof(Device_config.host_name) - 1)
-        strcpy(Device_config.host_name, String(DEFAULT_HOSTNAME).c_str());
-      else
-        strncpy(Device_config.host_name, String(DEFAULT_HOSTNAME).c_str(), sizeof(Device_config.host_name) - 1);
-    }
-    Serial.print(F("\n[INFO]: Device Config File Read. Checksum ok."));
-    return true; 
-  }
-  else
-  {
-    Serial.print(F("\n[ERROR]: Could not read device Config File."));
-    return false;
-  }
-}
-
 
 /*!
  *  @brief  Store Device Configuration into LitteFS.
