@@ -6,6 +6,8 @@ void setup()
   delay(500);
 
   configManager.begin(DEBUG);
+
+  configManager.Device_config.ap_mode = false;
 }
 
 void loop()

@@ -24,30 +24,6 @@ void ConfigManager::_listFSFiles(String dir_path)
 }
 
 /*!
- *  @brief  Initialize LittleFS.
- *  @return Returns true if initialized successfully.
- */
-bool ConfigManager::begin(bool listFiles) 
-{
-  if (!LittleFS.begin()) {
-    Serial.print(F("\n[ERROR]: An error has occurred while mounting LittleFS"));
-    return false;
-  }
-  else
-  {
-    Serial.print(F("\n[INFO]: LittleFS mounted successfully"));
-    
-    if (listFiles)
-    {
-      Serial.print(F("\n[INFO]: Listing files...\n"));
-      _listFSFiles("/");
-    }
-
-    return true;
-  }
-}
-
-/*!
  *  @brief  Load data from LittleFS.
  *  @param str_Config Struct pointer destination.
  *  @param size Destination struct size.
@@ -132,6 +108,32 @@ uint16_t ConfigManager::_calcChecksum(uint8_t* address, uint16_t sizeToCalc)
   return checkSum;
 }
 
+/*    PUBLIC FUNCTIONS
+
+/*!
+ *  @brief  Initialize LittleFS.
+ *  @return Returns true if initialized successfully.
+ */
+bool ConfigManager::begin(bool listFiles) 
+{
+  if (!LittleFS.begin()) {
+    Serial.print(F("\n[ERROR]: An error has occurred while mounting LittleFS"));
+    return false;
+  }
+  else
+  {
+    Serial.print(F("\n[INFO]: LittleFS mounted successfully"));
+    
+    if (listFiles)
+    {
+      Serial.print(F("\n[INFO]: Listing files...\n"));
+      _listFSFiles("/");
+    }
+
+    return true;
+  }
+}
+
 /* ConfigManager PUBLIC METHODS */
 /*!
  *  @brief  Load WifiConfiguration saved in LitteFS.
@@ -169,8 +171,6 @@ bool ConfigManager::loadWifiConfig()
  */
 bool ConfigManager::storeWifiConfig(String SSID, String password, bool dyn_ip, IPAddress ip, IPAddress gw, IPAddress mask)
 {
-  //memset(&Wifi_config, 0, sizeof(Wifi_config));
-
   //SAVE SSID
   if (strlen(SSID.c_str()) < sizeof(Wifi_config.WiFi_cred.wifi_ssid) - 1)
     strcpy(Wifi_config.WiFi_cred.wifi_ssid, SSID.c_str());
@@ -253,19 +253,18 @@ bool ConfigManager::loadDeviceConfig()
   }
 }
 
+
 /*!
  *  @brief  Store Device Configuration into LitteFS.
  *  @return Returns true if configuration saved successfully.
  */
-bool ConfigManager::storeDeviceConfig(String host_name, String air_v, String wat_v, bool apmode)
+bool ConfigManager::storeDeviceConfig(const char* host_name, bool apmode)
 {
-  //memset(&Device_config, 0, sizeof(Device_config));
-
   //SAVE HOSTNAME
-  if (strlen(host_name.c_str()) < sizeof(Device_config.host_name) - 1)
-    strcpy(Device_config.host_name, host_name.c_str());
+  if (strlen(host_name) < sizeof(Device_config.host_name) - 1)
+    strcpy(Device_config.host_name, host_name);
   else
-    strncpy(Device_config.host_name, host_name.c_str(), sizeof(Device_config.host_name) - 1);
+    strncpy(Device_config.host_name, host_name, sizeof(Device_config.host_name) - 1);
 
   if ((String(Device_config.host_name) == ""))
     Serial.println(F("[WARNING]: Null hostname!"));

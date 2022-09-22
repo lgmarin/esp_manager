@@ -65,7 +65,7 @@ public:
     bool removeWifiConfig();
 
     bool loadDeviceConfig();
-    bool storeDeviceConfig(String host_name, String air_v, String wat_v, bool apmode);
+    bool storeDeviceConfig(const char* host_name, bool apmode);
     bool removeDeviceConfig();
 };
 
