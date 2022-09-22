@@ -108,7 +108,7 @@ uint16_t ConfigManager::_calcChecksum(uint8_t* address, uint16_t sizeToCalc)
   return checkSum;
 }
 
-/*    PUBLIC FUNCTIONS
+/*    PUBLIC FUNCTIONS */
 
 /*!
  *  @brief  Initialize LittleFS.
@@ -135,6 +135,7 @@ bool ConfigManager::begin(bool listFiles)
 }
 
 /* ConfigManager PUBLIC METHODS */
+
 /*!
  *  @brief  Load WifiConfiguration saved in LitteFS.
  *  @return Returns true if configuration loaded successfully.
