@@ -14,11 +14,12 @@ private:
     bool _startAP(const char* ap_name);
     bool _startSTA();
     void _finishAP();
-
-    bool _isAPMode;
+    
 public:
-    void begin();
     IPAddress deviceIP;
+    bool staticIP;
+    bool isAPMode;
+    void begin();
 };
 
 #endif

@@ -21,9 +21,14 @@ bool WifiManager::_setStaticIp()
     if(ip.isSet() && gw.isSet() && ms.isSet())
     {
         if(WiFi.config(ip, gw, ms))
+        {
+            staticIP = true;
+            Serial.println(PSTR("[INFO] Using static IP."));
             return true;
+        }
     }
 
+    staticIP = false;
     return false;
 }
 
@@ -37,11 +42,10 @@ bool WifiManager::_startSTA()
     WiFi.mode(WIFI_STA);
     WiFi.persistent(true);
     
+    staticIP = false;
+
     if(configManager.Wifi_config.dyn_ip)
-    {
-        if(_setStaticIp())
-            Serial.println(F("[INFO] Using static IP."));
-    }
+        _setStaticIp();
 
     if (WiFi.SSID() == "")
         return false;
@@ -86,7 +90,8 @@ bool WifiManager::_startAP(const char* ap_name)
         dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
         dnsServer->start(53, "*", deviceIP);
 
-        _isAPMode = true;
+        isAPMode = true;
+        staticIP = true;
 
         return true;
     }
@@ -103,16 +108,19 @@ void WifiManager::_finishAP()
 {
     WiFi.mode(WIFI_STA);
     delete dnsServer;
-    _isAPMode = false;
+    isAPMode = false;
 }
 
 void WifiManager::begin()
 {
-
     if(!configManager.Device_config.ap_mode)
     {
         if(!_startSTA())
             _startAP(configManager.Device_config.host_name);
+    }
+    else
+    {
+        _startAP(configManager.Device_config.host_name);
     }
 
 }
