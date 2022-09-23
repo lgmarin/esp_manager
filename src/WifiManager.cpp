@@ -3,6 +3,8 @@
 
 #include <ESP8266WiFi.h>
 
+WiFiEventHandler disconnectedEventHandler;
+
 /**
  * @brief Set static IP according to data stored in the flash memory.
  * 
@@ -22,13 +24,13 @@ bool WifiManager::_setStaticIp()
     {
         if(WiFi.config(ip, gw, ms))
         {
-            staticIP = true;
+            _staticIP = true;
             Serial.println(PSTR("[INFO] Using static IP."));
             return true;
         }
     }
 
-    staticIP = false;
+    _staticIP = false;
     return false;
 }
 
@@ -42,7 +44,7 @@ bool WifiManager::_startSTA()
     WiFi.mode(WIFI_STA);
     WiFi.persistent(true);
     
-    staticIP = false;
+    _staticIP = false;
 
     if(configManager.Wifi_config.dyn_ip)
         _setStaticIp();
@@ -85,13 +87,13 @@ bool WifiManager::_startAP(const char* ap_name)
         deviceIP = WiFi.softAPIP();
         Serial.print(PSTR("\n[SUCCESS]: Captive Portal Started at IP: %s")); Serial.print(deviceIP);
 
-        dnsServer = new DNSServer();
+        _dnsServer = new DNSServer();
 
         dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
         dnsServer->start(53, "*", deviceIP);
 
-        isAPMode = true;
-        staticIP = true;
+        _isAPMode = true;
+        _staticIP = true;
 
         return true;
     }
@@ -107,8 +109,72 @@ bool WifiManager::_startAP(const char* ap_name)
 void WifiManager::_finishAP()
 {
     WiFi.mode(WIFI_STA);
-    delete dnsServer;
-    isAPMode = false;
+    delete _dnsServer;
+    _isAPMode = false;
+}
+
+/**
+ * @brief Conver wifi RSSI to percent value.
+ * 
+ * @param RSSI 
+ * @return String 
+ */
+String WifiManager::_rssiToPercent(int32_t RSSI)
+{
+    if (RSSI <= -100)
+        return String(0);
+    
+    if (RSSI >= -50)
+        return String(100);
+
+    return String(2 * (RSSI + 100));
+}
+
+/**
+ * @brief Return a list of available wifi stations nearby.
+ * 
+ * @return String List of networks in JSON format.
+ */
+String WifiManager::scanNetworks()
+{
+    String json;
+    bool canScan;
+    int n = WiFi.scanComplete();
+
+    currentMillis = millis();
+
+    if (currentMillis - lastScanMillis > SCAN_PERIOD)
+    {
+        canScan = true;
+        Serial.print(F("\n[INFO]: Scanning networks... "));
+        lastScanMillis = currentMillis;
+    }
+        json += "{\"networks\": [";
+        if(n == -2 && canScan){
+        // Scan not triggered, and not in the waiting timer
+        WiFi.scanNetworks(true);
+    }
+    else if(n)
+    {
+        for (int i = 0; i < n; ++i)
+        {
+            if(i) json += ",";
+            json += "{";
+            json += "\"SSID\":\""+WiFi.SSID(i)+"\"";
+            json += ",\"Quality\":\""+_rssiToPercent(WiFi.RSSI(i))+"%\"";     
+            json += "}";
+        }
+
+        WiFi.scanDelete();
+
+        if(WiFi.scanComplete() == -2)
+        {
+            WiFi.scanNetworks(true);
+        }
+    }
+    json += "] }";
+
+    return json;
 }
 
 void WifiManager::begin()
@@ -126,6 +192,30 @@ void WifiManager::begin()
     disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event)
     {
         Serial.println(PSTR("[WARN] Wifi disconnected from STA."));
-    });    
 
+        int i = 0;
+        while(i < RETRY_BEFORE_AP)
+        {
+            if(_startSTA())
+                break;
+            
+            i++
+        }
+
+        if(i == 2)
+        {
+            Serial.println(PSTR("[WARN] Can't connect back to STA, starting AP."))
+            _startAP(configManager.Device_config.host_name);
+        }
+    });    
 }
+
+void WifiManager::loop()
+{
+    if(_isAPMode)
+    {
+        _dnsServer->processNextRequest();
+    }
+}
+
+WifiManager wifiManager;
