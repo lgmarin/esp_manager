@@ -123,4 +123,9 @@ void WifiManager::begin()
         _startAP(configManager.Device_config.host_name);
     }
 
+    disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event)
+    {
+        Serial.println(PSTR("[WARN] Wifi disconnected from STA."));
+    });    
+
 }
