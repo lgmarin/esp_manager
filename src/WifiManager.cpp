@@ -34,6 +34,15 @@ bool WifiManager::_setStaticIp()
  */
 bool WifiManager::_startSTA()
 {
+    WiFi.mode(WIFI_STA);
+    WiFi.persistent(true);
+    
+    if(configManager.Wifi_config.dyn_ip)
+    {
+        if(_setStaticIp())
+            Serial.println(F("[INFO] Using static IP."));
+    }
+
     if (WiFi.SSID() == "")
         return false;
 
@@ -56,13 +65,9 @@ bool WifiManager::_startSTA()
 
 void WifiManager::begin()
 {
-    WiFi.mode(WIFI_STA);
-    WiFi.persistent(true);
-    
-    if(configManager.Wifi_config.dyn_ip)
+    if(!configManager.Device_config.ap_mode)
     {
-        if(_setStaticIp())
-            Serial.println(F("[INFO] Using static IP."));
+        _startSTA();
     }
 
 

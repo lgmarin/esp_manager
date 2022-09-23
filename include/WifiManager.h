@@ -13,9 +13,8 @@ private:
     bool _setStaticIp();
     bool _startAP();
     bool _startSTA();
-    bool _waitForConnectResult();
 
-    bool _captivePortalMode;
+    bool _isCaptivePortal;
 public:
     void begin();
 };
