@@ -11,12 +11,14 @@ private:
     DNSServer *dnsServer;
 
     bool _setStaticIp();
-    bool _startAP();
+    bool _startAP(const char* ap_name);
     bool _startSTA();
+    void _finishAP();
 
-    bool _isCaptivePortal;
+    bool _isAPMode;
 public:
     void begin();
+    IPAddress deviceIP;
 };
 
 #endif
