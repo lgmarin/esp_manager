@@ -33,9 +33,7 @@ typedef struct
 } DeviceConfig;
 
 /**
- * @brief ConfigManager - Creates a configuration structure
- * 
- * @param debug *optional  - Enables debuging (default = false)
+ * @brief ConfigManager - Manages ESP configuration using LittleFS.
  */
 class ConfigManager
 {

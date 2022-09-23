@@ -1,8 +1,8 @@
 #include <LittleFS.h>
 #include "ConfigManager.h"
 
-const char* wifi_config_file PROGMEM = "/wifi.cfg";
-const char* device_config_file PROGMEM = "/device.cfg";
+static const char* wifi_config_file PROGMEM = "/wifi.cfg";
+static const char* device_config_file PROGMEM = "/device.cfg";
 
 /*!
  *  @brief  Return the content of dir in the FS on the Serial Console.
@@ -319,14 +319,14 @@ void ConfigManager::saveConfig()
   if (Device_config.checksum != new_DeviceSum)
   {
     if (_saveFSData(&Device_config, sizeof(Device_config), (char*) device_config_file))
-      Serial.print(PSTR("\n[INFO]: Device config file saved!"));
+      Serial.print(F("\n[INFO]: Device config file saved!"));
   }
 
   new_WifiSum = _calcChecksum((uint8_t*) &Wifi_config, sizeof(Wifi_config) - sizeof(Wifi_config.checksum));
   if (Wifi_config.checksum != new_WifiSum)
   {
     if (_saveFSData(&Wifi_config, sizeof(Wifi_config), (char*) wifi_config_file))
-      Serial.print(PSTR("\n[INFO]: Wifi config file saved!"));
+      Serial.print(F("\n[INFO]: Wifi config file saved!"));
   }
 }
 
