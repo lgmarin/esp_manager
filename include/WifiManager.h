@@ -3,12 +3,19 @@
 
 #include "definitions.h"
 
+#include <DNSServer.h>
+
 class WifiManager
 {
 private:
-    /* data */
+    DNSServer *dnsServer;
+
+    bool _setStaticIp();
+    bool _startAP();
+    bool _startSTA();
+
 public:
-    
+    void begin();
 };
 
 #endif
