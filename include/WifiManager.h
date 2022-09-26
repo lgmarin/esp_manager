@@ -3,11 +3,13 @@
 
 #include "definitions.h"
 #include <DNSServer.h>
+#include <ESP8266WiFi.h>
 
 class WifiManager
 {
 private:
     DNSServer *_dnsServer;
+    WiFiEventHandler _disconnectedEventHandler;
     bool _setStaticIp();
     bool _startAP(const char* ap_name);
     bool _startSTA();

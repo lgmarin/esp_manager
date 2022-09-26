@@ -1,9 +1,6 @@
 #include "WifiManager.h"
 #include "ConfigManager.h"
 
-#include <ESP8266WiFi.h>
-
-WiFiEventHandler disconnectedEventHandler;
 
 /**
  * @brief Set static IP according to data stored in the flash memory.
@@ -208,7 +205,7 @@ void WifiManager::begin()
         _startAP(configManager.Device_config.host_name);
     }
 
-    disconnectedEventHandler = WiFi.onStationModeDisconnected([this](const WiFiEventStationModeDisconnected& event)
+    _disconnectedEventHandler = WiFi.onStationModeDisconnected([this](const WiFiEventStationModeDisconnected& event)
     {
         Serial.println(PSTR("[WARN] Wifi disconnected from STA."));
         _isDisconnected = true;
