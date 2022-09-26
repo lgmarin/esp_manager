@@ -12,15 +12,19 @@ private:
     bool _startAP(const char* ap_name);
     bool _startSTA();
     void _finishAP();
+    String _rssiToPercent(int32_t RSSI);
+    void _retrySTAConnection();
     bool _staticIP;
     bool _isAPMode;
-    String _rssiToPercent(int32_t RSSI);
+    bool _isDisconnected;
+    unsigned long _currentMillis;
+    unsigned long _lastScanMillis;
 
 public:
     IPAddress deviceIP;
     void begin();
     void loop();
-    String scanNetworks(); 
+    String scanNetworks();
 };
 
 extern WifiManager wifiManager;

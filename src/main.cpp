@@ -1,4 +1,5 @@
 #include "ConfigManager.h"
+#include "WifiManager.h"
 
 void setup()
 {
@@ -6,11 +7,10 @@ void setup()
   delay(500);
 
   configManager.begin(DEBUG);
-
-  configManager.Device_config.ap_mode = false;
+  wifiManager.begin();
 }
 
 void loop()
 {
-  
+  wifiManager.loop();
 }

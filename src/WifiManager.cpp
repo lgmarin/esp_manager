@@ -89,8 +89,8 @@ bool WifiManager::_startAP(const char* ap_name)
 
         _dnsServer = new DNSServer();
 
-        dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
-        dnsServer->start(53, "*", deviceIP);
+        _dnsServer->setErrorReplyCode(DNSReplyCode::NoError);
+        _dnsServer->start(53, "*", deviceIP);
 
         _isAPMode = true;
         _staticIP = true;
@@ -130,6 +130,24 @@ String WifiManager::_rssiToPercent(int32_t RSSI)
     return String(2 * (RSSI + 100));
 }
 
+void WifiManager::_retrySTAConnection()
+{
+    int i = 0;
+    while(i < RETRY_BEFORE_AP)
+    {
+        if(_startSTA())
+            break;
+        
+        i++;
+    }
+
+    if(i == 2)
+    {
+        Serial.println(PSTR("[WARN] Can't connect back to STA, starting AP."));
+        _startAP(configManager.Device_config.host_name);
+    }
+}
+
 /**
  * @brief Return a list of available wifi stations nearby.
  * 
@@ -141,13 +159,13 @@ String WifiManager::scanNetworks()
     bool canScan;
     int n = WiFi.scanComplete();
 
-    currentMillis = millis();
+    _currentMillis = millis();
 
-    if (currentMillis - lastScanMillis > SCAN_PERIOD)
+    if (_currentMillis - _lastScanMillis > SCAN_PERIOD)
     {
         canScan = true;
         Serial.print(F("\n[INFO]: Scanning networks... "));
-        lastScanMillis = currentMillis;
+        _lastScanMillis = _currentMillis;
     }
         json += "{\"networks\": [";
         if(n == -2 && canScan){
@@ -177,6 +195,7 @@ String WifiManager::scanNetworks()
     return json;
 }
 
+
 void WifiManager::begin()
 {
     if(!configManager.Device_config.ap_mode)
@@ -189,32 +208,21 @@ void WifiManager::begin()
         _startAP(configManager.Device_config.host_name);
     }
 
-    disconnectedEventHandler = WiFi.onStationModeDisconnected([](const WiFiEventStationModeDisconnected& event)
+    disconnectedEventHandler = WiFi.onStationModeDisconnected([this](const WiFiEventStationModeDisconnected& event)
     {
         Serial.println(PSTR("[WARN] Wifi disconnected from STA."));
-
-        int i = 0;
-        while(i < RETRY_BEFORE_AP)
-        {
-            if(_startSTA())
-                break;
-            
-            i++
-        }
-
-        if(i == 2)
-        {
-            Serial.println(PSTR("[WARN] Can't connect back to STA, starting AP."))
-            _startAP(configManager.Device_config.host_name);
-        }
-    });    
+        _isDisconnected = true;
+    });  
 }
 
 void WifiManager::loop()
 {
     if(_isAPMode)
-    {
         _dnsServer->processNextRequest();
+
+    if(!_isAPMode && _isDisconnected)
+    {
+       _retrySTAConnection();
     }
 }
 
