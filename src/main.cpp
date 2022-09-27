@@ -1,5 +1,6 @@
 #include "ConfigManager.h"
 #include "WifiManager.h"
+#include "WebServer.h"
 
 void setup()
 {

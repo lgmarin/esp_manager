@@ -15,7 +15,8 @@ private:
     void _bindServerHandlers();
 public:
     void begin();
-    void loop();
 };
+
+extern WebServer webServer;
 
 #endif

@@ -78,6 +78,10 @@ String WebServer::_wifiPageProcessor(const String& var)
     return String();
 }
 
+/*
+*    HTTP ROUTES HANDLERS
+*/
+
 void WebServer::_notFoundHandler(AsyncWebServerRequest *request)
 {
     String message = "File Not Found\n\n";
@@ -118,7 +122,9 @@ void WebServer::_bindServerHandlers()
     _server.onNotFound(_notFoundHandler);
 }
 
-
+/**
+ * @brief WebServer initialization.
+ */
 void WebServer::begin()
 {
     _bindServerHandlers();
@@ -128,3 +134,5 @@ void WebServer::begin()
 
     _server.serveStatic("/", LittleFS, "/");
 }
+
+WebServer webServer;
