@@ -15,7 +15,7 @@ private:
     bool _startSTA();
     void _finishAP();
     String _rssiToPercent(int32_t RSSI);
-    void _retrySTAConnection();
+    void _retrySTAConnection(uint8_t retry_count);
     bool _staticIP;
     bool _isAPMode;
     bool _isDisconnected;

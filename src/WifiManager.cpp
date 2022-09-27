@@ -127,18 +127,22 @@ String WifiManager::_rssiToPercent(int32_t RSSI)
     return String(2 * (RSSI + 100));
 }
 
-void WifiManager::_retrySTAConnection()
+/**
+ * @brief  Retry connection to a stored network.
+ * 
+ * @param retry_count Ammount of times to retry for connection.
+ */
+void WifiManager::_retrySTAConnection(uint8_t retry_count)
 {
     int i = 0;
-    while(i < RETRY_BEFORE_AP)
+    while(i < retry_count)
     {
         if(_startSTA())
             break;
-        
         i++;
     }
 
-    if(i == 2)
+    if(i == retry_count)
     {
         Serial.println(PSTR("[WARN] Can't connect back to STA, starting AP."));
         _startAP(configManager.Device_config.host_name);
@@ -192,37 +196,11 @@ String WifiManager::scanNetworks()
     return json;
 }
 
-
-void WifiManager::begin()
-{
-    if(!configManager.Device_config.ap_mode)
-    {
-        if(!_startSTA())
-            _startAP(configManager.Device_config.host_name);
-    }
-    else
-    {
-        _startAP(configManager.Device_config.host_name);
-    }
-
-    _disconnectedEventHandler = WiFi.onStationModeDisconnected([this](const WiFiEventStationModeDisconnected& event)
-    {
-        Serial.println(PSTR("[WARN] Wifi disconnected from STA."));
-        _isDisconnected = true;
-    });  
-}
-
-void WifiManager::loop()
-{
-    if(_isAPMode)
-        _dnsServer->processNextRequest();
-
-    if(!_isAPMode && _isDisconnected)
-    {
-       _retrySTAConnection();
-    }
-}
-
+/**
+ * @brief Get device MAC Address.
+ * 
+ * @return String Device MAC address.
+ */
 String WifiManager::getMACAddress()
 {
     if(WiFi.getMode() == 2)
@@ -231,6 +209,11 @@ String WifiManager::getMACAddress()
     return WiFi.macAddress();
 }
 
+/**
+ * @brief Get current connection mode (AP, STA, AP+STA).
+ * 
+ * @return String Connection mode.
+ */
 String WifiManager::getMode()
 {
     switch (WiFi.getMode())
@@ -253,6 +236,11 @@ String WifiManager::getMode()
     }
 }
 
+/**
+ * @brief Get connected SSID (for STA mode) or device Host Name (for AP mode).
+ * 
+ * @return String Device SSID
+ */
 String WifiManager::getSSID()
 {
     if (WiFi.getMode() == 2)
@@ -260,6 +248,62 @@ String WifiManager::getSSID()
         return String(configManager.Device_config.host_name);
     } 
     return WiFi.SSID(); 
+}
+
+/**
+ * @brief Display Wifi mode information.
+ * 
+ * @return String Wifi information.
+ */
+String wifiInfo()
+{
+    String infoText;
+    if (WiFi.getMode() == 2 || WiFi.getMode() == 3)
+    {
+        infoText = "AP: " + WiFi.softAPIP().toString();
+        return infoText;
+    }
+
+    infoText = "STA: " + WiFi.localIP().toString();
+    return infoText;
+}
+
+/**
+ * @brief WifiManager initialization scritps.
+ * 
+ */
+void WifiManager::begin()
+{
+    if(!configManager.Device_config.ap_mode)
+    {
+        if(!_startSTA())
+            _startAP(configManager.Device_config.host_name);
+    }
+    else
+    {
+        _startAP(configManager.Device_config.host_name);
+    }
+
+    _disconnectedEventHandler = WiFi.onStationModeDisconnected([this](const WiFiEventStationModeDisconnected& event)
+    {
+        Serial.println(PSTR("[WARN] Wifi disconnected from STA."));
+        _isDisconnected = true;
+    });  
+}
+
+/**
+ * @brief WifiManager main loop.
+ * 
+ */
+void WifiManager::loop()
+{
+    if(_isAPMode)
+        _dnsServer->processNextRequest();
+
+    if(!_isAPMode && _isDisconnected)
+    {
+       _retrySTAConnection(RETRY_BEFORE_AP);
+    }
 }
 
 WifiManager wifiManager;
