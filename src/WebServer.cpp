@@ -1,17 +1,20 @@
 #include "WebServer.h"
 #include "ConfigManager.h"
+#include "WifiManager.h"
+
 #include <LittleFS.h>
 
 /*
 *     HTML PRE-PROCESSORS
 */
 
-String WebServer::_indexPageProcessor(const String& var){
+String WebServer::_indexPageProcessor(const String& var)
+{
     if(var == "HOST_NAME"){
-        return getHostName();
+        return wifiManager.getSSID();
     }
     else if(var == "DEVICE_IP"){
-        return getIpAddress();
+        return wifiManager.deviceIP.toString();
     }
     // else if(var == "DHT_T"){
     //     return String(airTemp());
@@ -23,7 +26,7 @@ String WebServer::_indexPageProcessor(const String& var){
     //     return String(soilHumidity());
     // }
     else if(var == "CONN_STATUS"){
-        if (getMode() == "Conectado")
+        if (wifiManager.getMode() == "Conectado")
         {
             return "fc1505";
         }
@@ -32,54 +35,51 @@ String WebServer::_indexPageProcessor(const String& var){
     return String();
 }
 
-String WebServer::_configPageProcessor(const String& var){
+String WebServer::_configPageProcessor(const String& var)
+{
     if(var == "MODE"){
-        return getMode();
+        return wifiManager.getMode();
     }
     else if(var == "SSID"){
-        return getSSID();
+        return wifiManager.getSSID();
     }
         else if(var == "HOST_NAME"){
-        return getHostName();
+        return wifiManager.getSSID();
     }
     else if(var == "DEVICE_IP"){
-        return getIpAddress();
+        return wifiManager.deviceIP.toString();
     }
     else if (var == "MAC")
     {
-        return getMacAddress();
+        return wifiManager.getMACAddress();
     }
     else if (var == "AP_MODE")
-        if(Device_config.ap_mode)
+    {
+        if(configManager.Device_config.ap_mode)
         {
-        return "checked";
+            return "checked";
         } 
         else
         {
-        return "";
+            return "";
         }
-    // else if (var == "AIR_VAL")
-    // {
-    //     return String(Device_config.air_value);
-    // }
-    // else if (var == "WAT_VAL")
-    // {
-    //     return String(Device_config.wat_value);
-    // }  
+    } 
     return String();
 }
 
-String WebServer::_wifiPageProcessor(const String& var){
+String WebServer::_wifiPageProcessor(const String& var)
+{
     if(var == "HOST_NAME"){
-        return getHostName();
+        return wifiManager.getSSID();
     }
     else if(var == "DEVICE_IP"){
-        return getIpAddress();
+        return wifiManager.deviceIP.toString();
     }
     return String();
 }
 
-void WebServer::_notFoundHandler(AsyncWebServerRequest *request){
+void WebServer::_notFoundHandler(AsyncWebServerRequest *request)
+{
     String message = "File Not Found\n\n";
     message += "URI: ";
     message += request->url();

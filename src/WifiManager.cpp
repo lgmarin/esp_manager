@@ -223,4 +223,43 @@ void WifiManager::loop()
     }
 }
 
+String WifiManager::getMACAddress()
+{
+    if(WiFi.getMode() == 2)
+        return WiFi.softAPmacAddress();
+
+    return WiFi.macAddress();
+}
+
+String WifiManager::getMode()
+{
+    switch (WiFi.getMode())
+    {
+        case WIFI_STA:
+            return "Conectado";
+            break;
+        case WIFI_AP:
+            return "Ponto de Acesso";
+            break;
+        case WIFI_OFF:
+            return "Desligado";
+            break;
+        case WIFI_AP_STA:
+            return "AP+STA";
+            break;
+        default:
+            return "Desconhecido";
+            break;
+    }
+}
+
+String WifiManager::getSSID()
+{
+    if (WiFi.getMode() == 2)
+    {
+        return String(configManager.Device_config.host_name);
+    } 
+    return WiFi.SSID(); 
+}
+
 WifiManager wifiManager;

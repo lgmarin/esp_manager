@@ -27,6 +27,9 @@ public:
     void begin();
     void loop();
     String scanNetworks();
+    String getMACAddress();
+    String getMode();
+    String getSSID();
 };
 
 extern WifiManager wifiManager;
