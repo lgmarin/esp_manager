@@ -12,9 +12,9 @@ private:
 
 public:
     Display();
-    begin();
-    sleep(unsigned long current_millis);
-    wake(unsigned long current_millis);
+    void begin();
+    void sleep(unsigned long current_millis);
+    void wake(unsigned long current_millis);
 };
 
 
