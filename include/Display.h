@@ -13,6 +13,8 @@ private:
 public:
     Display();
     begin();
+    sleep(unsigned long current_millis);
+    wake(unsigned long current_millis);
 };
 
 
